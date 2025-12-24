@@ -14,12 +14,12 @@
     <!-- TODO: 本地Windows开发时取消注释以使用图表功能
     <PackageReference Include="OxyPlot.Wpf" Version="2.1.2" />
     -->
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
     <PackageReference Include="NLog" Version="5.3.11" />
     <PackageReference Include="NLog.Extensions.Logging" Version="5.3.11" />
-    <PackageReference Include="System.IO.Ports" Version="8.0.0" />
+    <PackageReference Include="System.IO.Ports" Version="6.0.0" />
   </ItemGroup>
 
   <!-- Core项目暂时不引用，使用Mock服务代替 -->

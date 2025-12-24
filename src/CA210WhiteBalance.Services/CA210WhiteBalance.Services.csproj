@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="NLog" Version="5.3.11" />
     <PackageReference Include="NLog.Extensions.Logging" Version="5.3.11" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
   </ItemGroup>
 
   <!-- ClosedXML暂时移除，等待GitHub Actions编译成功后再添加 -->
