@@ -10,8 +10,14 @@
     <PackageReference Include="NLog" Version="5.3.11" />
     <PackageReference Include="NLog.Extensions.Logging" Version="5.3.11" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
+  </ItemGroup>
+
+  <!-- ClosedXML暂时移除，等待GitHub Actions编译成功后再添加 -->
+  <!-- TODO: 本地Windows开发时取消注释以使用Excel导出功能
+  <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.104.2" />
   </ItemGroup>
+  -->
 
   <!-- Core项目暂时不引用，使用UI项目的Mock类型 -->
   <!-- TODO: 本地Windows开发时可以取消注释以使用真实数据类型

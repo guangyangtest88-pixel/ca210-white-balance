@@ -17,7 +17,6 @@
     <PackageReference Include="NLog" Version="5.3.11" />
     <PackageReference Include="NLog.Extensions.Logging" Version="5.3.11" />
     <PackageReference Include="System.IO.Ports" Version="8.0.0" />
-    <PackageReference Include="ClosedXML" Version="0.104.2" />
   </ItemGroup>
 
   <!-- Core项目暂时不引用，使用Mock服务代替 -->

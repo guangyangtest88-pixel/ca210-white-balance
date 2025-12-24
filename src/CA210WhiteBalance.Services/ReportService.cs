@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using ClosedXML.Excel;
 using Microsoft.Extensions.Logging;
 
 namespace CA210WhiteBalance.Services
@@ -66,45 +64,32 @@ namespace CA210WhiteBalance.Services
         {
             try
             {
-                _logger.LogInformation("导出Excel文件: {FilePath}", filePath);
+                _logger.LogInformation("导出调试报告到文本文件: {FilePath}", filePath);
 
-                using (var workbook = new XLWorkbook())
+                // 简化版：导出为文本文件而不是Excel
+                using (var writer = new StreamWriter(filePath, false, System.Text.Encoding.UTF8))
                 {
-                    // 调试结果表
-                    var resultSheet = workbook.Worksheets.Add("调试结果");
-
-                    // 标题
-                    resultSheet.Cell("B1").Value = "CA210白平衡调试报告";
-                    resultSheet.Cell("B1").Style.Font.Bold = true;
-                    resultSheet.Cell("B1").Style.Font.FontSize = 16;
-
-                    // 结果信息
-                    int row = 3;
-                    resultSheet.Cell(row, 1).Value = "结果:";
-                    resultSheet.Cell(row, 2).Value = result?.ToString() ?? "无结果";
-                    row++;
-                    resultSheet.Cell(row, 1).Value = "导出时间:";
-                    resultSheet.Cell(row, 2).Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-
-                    // 调整列宽
-                    resultSheet.Columns().AdjustToContents();
-
-                    workbook.SaveAs(filePath);
+                    writer.WriteLine("==========================================");
+                    writer.WriteLine("     CA210白平衡调试报告");
+                    writer.WriteLine("==========================================");
+                    writer.WriteLine();
+                    writer.WriteLine($"结果: {result?.ToString() ?? "无结果"}");
+                    writer.WriteLine($"导出时间: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
                 }
 
-                _logger.LogInformation("Excel导出成功");
+                _logger.LogInformation("报告导出成功");
                 return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Excel导出失败");
+                _logger.LogError(ex, "报告导出失败");
                 return false;
             }
         }
 
         public bool GenerateTestReport(string filePath, object result, string notes = null)
         {
-            // 使用Excel生成测试报告
+            // 使用文本文件生成测试报告
             return ExportDebugResultToExcel(filePath, result);
         }
     }
