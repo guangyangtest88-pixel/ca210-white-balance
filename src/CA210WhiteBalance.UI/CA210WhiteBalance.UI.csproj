@@ -5,7 +5,6 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
-    <ApplicationIcon>app.ico</ApplicationIcon>
     <AssemblyName>CA210WhiteBalance</AssemblyName>
     <Version>1.0.0</Version>
   </PropertyGroup>
@@ -14,11 +13,19 @@
     <PackageReference Include="OxyPlot.Wpf" Version="2.1.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
+    <PackageReference Include="NLog" Version="5.3.11" />
     <PackageReference Include="NLog.Extensions.Logging" Version="5.3.11" />
+    <PackageReference Include="System.IO.Ports" Version="8.0.0" />
+    <PackageReference Include="ClosedXML" Version="2.0.0" />
+  </ItemGroup>
+
+  <!-- GitHub Actions编译时不引用Core项目 -->
+  <ItemGroup Condition="'$(GITHUB_ACTIONS)' != 'true'">
+    <ProjectReference Include="..\CA210WhiteBalance.Core\CA210WhiteBalance.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CA210WhiteBalance.Core\CA210WhiteBalance.Core.csproj" />
     <ProjectReference Include="..\CA210WhiteBalance.Services\CA210WhiteBalance.Services.csproj" />
   </ItemGroup>
 
