@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>false</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NLog" Version="5.3.11" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="5.3.11" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
+    <PackageReference Include="ClosedXML" Version="0.102.2" />
+    <PackageReference Include="PdfSharp.MigraDoc.Standard" Version="1.3.65" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CA210WhiteBalance.Core\CA210WhiteBalance.Core.csproj" />
+  </ItemGroup>
+
+</Project>

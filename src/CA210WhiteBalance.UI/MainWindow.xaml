@@ -1,0 +1,290 @@
+<Window x:Class="CA210WhiteBalance.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CA210WhiteBalance.UI"
+        mc:Ignorable="d"
+        Title="CA210白平衡上位机软件 v1.0" Height="750" Width="1400"
+        WindowStartupLocation="CenterScreen"
+        Background="#F5F5F5">
+
+    <Window.Resources>
+        <!-- 按钮样式 -->
+        <Style x:Key="PrimaryButton" TargetType="Button">
+            <Setter Property="Background" Value="#2196F3"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                Padding="{TemplateBinding Padding}"
+                                CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Property="Background" Value="#1976D2"/>
+                <Trigger Property="IsEnabled" Property="Background" Value="#BDBDBD"/>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="SuccessButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+            <Setter Property="Background" Value="#4CAF50"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Property="Background" Value="#388E3C"/>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="DangerButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+            <Setter Property="Background" Value="#F44336"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Property="Background" Value="#D32F2F"/>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="280"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="320"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- 左侧: 设备连接面板 -->
+        <Border Grid.Column="0" BorderBrush="#E0E0E0" BorderThickness="0,0,1,0" Background="White">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="15">
+                    <!-- CA-210面板 -->
+                    <TextBlock Text="CA-210 设备" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+                    <Border BorderBrush="#E0E0E0" BorderThickness="1" Padding="10" CornerRadius="4" Margin="0,0,0,15">
+                        <StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="连接状态:" VerticalAlignment="Center"/>
+                                <Ellipse Grid.Column="1" Width="12" Height="12" Fill="{Binding CA210StatusColor}" Margin="5,0,0,0"/>
+                            </Grid>
+                            <TextBlock Text="{Binding CA210ChannelInfo}" FontSize="11" Foreground="#757575" Margin="0,5,0,0"/>
+                            <Separator Margin="0,10"/>
+                            <Button Content="连接设备" Command="{Binding CA210ConnectCommand}"
+                                    Style="{StaticResource PrimaryButton}" Margin="0,5"/>
+                            <Button Content="断开设备" Command="{Binding CA210DisconnectCommand}"
+                                    Style="{StaticResource PrimaryButton}" Margin="0,5"/>
+                            <Button Content="零校准" Command="{Binding CA210CalibrateCommand}"
+                                    Style="{StaticResource PrimaryButton}" Margin="0,5"/>
+                            <Button Content="单次测量" Command="{Binding CA210MeasureCommand}"
+                                    Style="{StaticResource PrimaryButton}" Margin="0,5"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- RS232面板 -->
+                    <TextBlock Text="RS232 串口" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+                    <Border BorderBrush="#E0E0E0" BorderThickness="1" Padding="10" CornerRadius="4">
+                        <StackPanel>
+                            <TextBlock Text="COM端口:" Margin="0,0,0,5"/>
+                            <ComboBox ItemsSource="{Binding AvailablePorts}" SelectedItem="{Binding SelectedPort}"
+                                      Margin="0,0,0,10"/>
+                            <TextBlock Text="波特率:" Margin="0,0,0,5"/>
+                            <ComboBox SelectedIndex="0" Margin="0,0,0,10">
+                                <ComboBoxItem Content="9600"/>
+                                <ComboBoxItem Content="19200"/>
+                                <ComboBoxItem Content="38400"/>
+                                <ComboBoxItem Content="57600"/>
+                                <ComboBoxItem Content="115200"/>
+                            </ComboBox>
+                            <TextBlock Text="协议:" Margin="0,0,0,5"/>
+                            <ComboBox ItemsSource="{Binding ProtocolNames}" SelectedItem="{Binding SelectedProtocol}"
+                                      Margin="0,0,0,10"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="连接状态:" VerticalAlignment="Center"/>
+                                <Ellipse Grid.Column="1" Width="12" Height="12" Fill="{Binding SerialStatusColor}" Margin="5,0,0,0"/>
+                            </Grid>
+                            <Separator Margin="0,10"/>
+                            <Button Content="打开串口" Command="{Binding SerialOpenCommand}"
+                                    Style="{StaticResource PrimaryButton}" Margin="0,5"/>
+                            <Button Content="关闭串口" Command="{Binding SerialCloseCommand}"
+                                    Style="{StaticResource PrimaryButton}" Margin="0,5"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <!-- 中间: 测量数据显示 -->
+        <Border Grid.Column="1" BorderBrush="#E0E0E0" BorderThickness="0,0,1,0" Background="White">
+            <Grid Margin="20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- 标题 -->
+                <TextBlock Grid.Row="0" Text="测量数据" FontSize="20" FontWeight="Bold" Margin="0,0,0,15"/>
+
+                <!-- 测量数值卡片 -->
+                <Border Grid.Row="1" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="15" Margin="0,0,0,15">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Lv -->
+                        <StackPanel Grid.Row="0" Grid.Column="0">
+                            <TextBlock Text="亮度 Lv" FontSize="12" Foreground="#757575"/>
+                            <TextBlock Text="{Binding LvDisplay}" FontSize="32" FontWeight="Bold" Foreground="#2196F3"/>
+                        </StackPanel>
+
+                        <!-- T -->
+                        <StackPanel Grid.Row="0" Grid.Column="1">
+                            <TextBlock Text="色温 T" FontSize="12" Foreground="#757575"/>
+                            <TextBlock Text="{Binding TDisplay}" FontSize="32" FontWeight="Bold" Foreground="#FF9800"/>
+                        </StackPanel>
+
+                        <!-- Delta -->
+                        <StackPanel Grid.Row="0" Grid.Column="2">
+                            <TextBlock Text="偏差 Δ" FontSize="12" Foreground="#757575"/>
+                            <TextBlock Text="{Binding DeltaDisplay}" FontSize="32" FontWeight="Bold" Foreground="{Binding DeltaColor}"/>
+                        </StackPanel>
+
+                        <!-- x -->
+                        <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,10,0,0">
+                            <TextBlock Text="色度 x" FontSize="12" Foreground="#757575"/>
+                            <TextBlock Text="{Binding SxDisplay}" FontSize="24" FontWeight="Bold"/>
+                        </StackPanel>
+
+                        <!-- y -->
+                        <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,10,0,0">
+                            <TextBlock Text="色度 y" FontSize="12" Foreground="#757575"/>
+                            <TextBlock Text="{Binding SyDisplay}" FontSize="24" FontWeight="Bold"/>
+                        </StackPanel>
+
+                        <!-- 时间 -->
+                        <StackPanel Grid.Row="1" Grid.Column="2" Margin="0,10,0,0">
+                            <TextBlock Text="测量时间" FontSize="12" Foreground="#757575"/>
+                            <TextBlock Text="{Binding MeasureTime}" FontSize="14"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- 实时曲线图表 -->
+                <Border Grid.Row="2" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8">
+                    <oxy:PlotView Model="{Binding ChartModel}" x:Name="MeasurementChart"
+                                  xmlns:oxy="clr-namespace:OxyPlot.Wpf;assembly=OxyPlot.Wpf"/>
+                </Border>
+
+                <!-- 目标设置 -->
+                <Border Grid.Row="3" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="15" Margin="0,15,0,0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="100"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" Text="目标x:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <TextBox Grid.Column="1" Text="{Binding TargetX}" VerticalAlignment="Center" Height="30"/>
+
+                        <TextBlock Grid.Column="2" Text="目标y:" VerticalAlignment="Center" Margin="20,0,10,0"/>
+                        <TextBox Grid.Column="3" Text="{Binding TargetY}" VerticalAlignment="Center" Height="30"/>
+
+                        <TextBlock Grid.Column="4" Text="容差:" VerticalAlignment="Center" Margin="20,0,10,0"/>
+                        <TextBox Grid.Column="5" Text="{Binding Tolerance}" VerticalAlignment="Center" Height="30"/>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- 右侧: 控制面板 -->
+        <Border Grid.Column="2" BorderBrush="#E0E0E0" Background="White">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="15">
+                    <!-- 测量控制 -->
+                    <TextBlock Text="测量控制" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+                    <Border BorderBrush="#E0E0E0" BorderThickness="1" Padding="10" CornerRadius="4" Margin="0,0,0,15">
+                        <StackPanel>
+                            <Button Content="连续测量" Command="{Binding StartContinuousCommand}"
+                                    Style="{StaticResource PrimaryButton}" Height="40" Margin="0,5"/>
+                            <Button Content="停止测量" Command="{Binding StopContinuousCommand}"
+                                    Style="{StaticResource DangerButton}" Height="40" Margin="0,5"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 调试控制 -->
+                    <TextBlock Text="白平衡调试" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+                    <Border BorderBrush="#E0E0E0" BorderThickness="1" Padding="10" CornerRadius="4" Margin="0,0,0,15">
+                        <StackPanel>
+                            <Button Content="开始调试" Command="{Binding StartDebugCommand}"
+                                    Style="{StaticResource SuccessButton}" Height="50" FontSize="16" FontWeight="Bold" Margin="0,5"/>
+                            <Button Content="停止调试" Command="{Binding StopDebugCommand}"
+                                    Style="{StaticResource DangerButton}" Height="50" FontSize="16" FontWeight="Bold" Margin="0,5"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 调试进度 -->
+                    <TextBlock Text="调试进度" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+                    <Border BorderBrush="#E0E0E0" BorderThickness="1" Padding="10" CornerRadius="4" Margin="0,0,0,15">
+                        <StackPanel>
+                            <TextBlock Text="{Binding DebugStep}" FontWeight="Bold" FontSize="14"/>
+                            <TextBlock Text="{Binding DebugStatus}" Margin="0,5,0,0" Foreground="#757575"/>
+                            <Separator Margin="0,10"/>
+                            <TextBlock>
+                                <Run Text="当前: x="/><Run Text="{Binding CurrentX, StringFormat=F4}" Foreground="Blue"/>
+                                <Run Text=", y="/><Run Text="{Binding CurrentY, StringFormat=F4}" Foreground="Blue"/>
+                            </TextBlock>
+                            <TextBlock>
+                                <Run Text="偏差: Δx="/><Run Text="{Binding DebugDeltaX, StringFormat=F4}"/>
+                                <Run Text=", Δy="/><Run Text="{Binding DebugDeltaY, StringFormat=F4}"/>
+                            </TextBlock>
+                            <TextBlock>
+                                <Run Text="迭代: "/><Run Text="{Binding DebugIteration}"/><Run Text="/"/><Run Text="{Binding DebugMaxIteration}"/>
+                            </TextBlock>
+                            <ProgressBar Value="{Binding DebugProgressValue}" Maximum="100" Height="20" Margin="0,10,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 调试结果 -->
+                    <TextBlock Text="调试结果" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+                    <Border BorderBrush="{Binding ResultBorderColor}" BorderThickness="2" Padding="10" CornerRadius="4" Margin="0,0,0,15">
+                        <StackPanel>
+                            <TextBlock Text="{Binding ResultStatus}" FontWeight="Bold" FontSize="16" Foreground="{Binding ResultColor}"/>
+                            <TextBlock Text="{Binding ResultMessage}" Margin="0,5,0,0" TextWrapping="Wrap"/>
+                            <Button Content="导出报告" Command="{Binding ExportReportCommand}"
+                                    Style="{StaticResource PrimaryButton}" Margin="0,10,0,0" Visibility="{Binding ExportButtonVisibility}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 日志 -->
+                    <TextBlock Text="操作日志" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+                    <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="4">
+                        <TextBox Text="{Binding LogText}" IsReadOnly="True" VerticalScrollBarVisibility="Auto"
+                                 Height="200" TextWrapping="Wrap" FontFamily="Consolas" FontSize="11"/>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</Window>

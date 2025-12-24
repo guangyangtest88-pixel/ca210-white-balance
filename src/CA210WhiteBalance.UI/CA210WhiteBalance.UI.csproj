@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>app.ico</ApplicationIcon>
+    <AssemblyName>CA210WhiteBalance</AssemblyName>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="OxyPlot.Wpf" Version="2.1.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="5.3.11" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CA210WhiteBalance.Core\CA210WhiteBalance.Core.csproj" />
+    <ProjectReference Include="..\CA210WhiteBalance.Services\CA210WhiteBalance.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\**" />
+  </ItemGroup>
+
+</Project>
