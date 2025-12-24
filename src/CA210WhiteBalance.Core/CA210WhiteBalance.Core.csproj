@@ -5,6 +5,8 @@
     <Nullable>enable</Nullable>
     <UseWPF>false</UseWPF>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <!-- 忽略CA200Srvr COM引用警告 -->
+    <NoWarn>$(NoWarn);CS8019;MSB3277</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,9 +14,9 @@
     <PackageReference Include="System.Management" Version="8.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <!-- CA-SDK COM Reference - 需要在Windows上手动添加 -->
-    <COMReference Include="CA200Srvr">
+  <!-- CA-SDK COM引用在本地Windows环境添加，GitHub Actions编译时跳过 -->
+  <ItemGroup Condition="'$(BuildingByGitHubActions)' != 'true'">
+    <COMReference Include="CA200Srvr" Condition="Exists('$(MSBuildProgramFiles32)\CA200Srvr.dll')">
       <Guid>{YOUR-GUID-HERE}</Guid>
       <VersionMajor>1</VersionMajor>
       <VersionMinor>0</VersionMinor>
