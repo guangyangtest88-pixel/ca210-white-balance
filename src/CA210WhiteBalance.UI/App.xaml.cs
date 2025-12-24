@@ -1,10 +1,7 @@
 using System;
-using System.IO;
 using System.Windows;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using NLog.Extensions.Logging;
 using CA210WhiteBalance.UI.Mocks;
 
 namespace CA210WhiteBalance.UI
@@ -25,9 +22,6 @@ namespace CA210WhiteBalance.UI
             ConfigureServices(serviceCollection);
             ServiceProvider = serviceCollection.BuildServiceProvider();
 
-            // 配置NLog
-            ConfigureLogging();
-
             // 显示主窗口
             var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
             mainWindow.Show();
@@ -35,6 +29,13 @@ namespace CA210WhiteBalance.UI
 
         private void ConfigureServices(IServiceCollection services)
         {
+            // 配置日志
+            services.AddLogging(builder =>
+            {
+                builder.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Debug);
+                builder.AddConsole();
+            });
+
             // 注册Mock服务（用于GitHub Actions编译）
             // TODO: 本地Windows开发时需要替换为真实的CA210Service等
             services.AddSingleton<MockCA210Service>();
@@ -59,28 +60,6 @@ namespace CA210WhiteBalance.UI
             // 应用服务
             services.AddSingleton<Services.ILogService, Services.LogService>();
             services.AddSingleton<Services.IReportService, Services.ReportService>();
-
-            // 日志服务
-            services.AddSingleton<ILoggerFactory, LoggerFactory>();
-            services.AddLogging();
-        }
-
-        private void ConfigureLogging()
-        {
-            var config = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .Build();
-
-            // 配置NLog
-            var loggerFactory = LoggerFactory.Create(builder =>
-            {
-                builder.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Debug);
-                builder.AddNLog(config);
-                builder.AddConsole();
-            });
-
-            ServiceProvider = loggerFactory.CreateServiceProvider();
         }
 
         protected override void OnExit(ExitEventArgs e)
