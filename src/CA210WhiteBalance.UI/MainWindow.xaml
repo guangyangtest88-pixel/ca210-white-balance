@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CA210WhiteBalance.UI"
-        xmlns:oxy="clr-namespace:OxyPlot.Wpf;assembly=OxyPlot.Wpf"
         mc:Ignorable="d"
         Title="CA210白平衡上位机软件 v1.0" Height="750" Width="1400"
         WindowStartupLocation="CenterScreen"
@@ -197,8 +196,12 @@
                 </Border>
 
                 <!-- 实时曲线图表 -->
-                <Border Grid.Row="2" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8">
-                    <oxy:PlotView Model="{Binding ChartModel}" x:Name="MeasurementChart"/>
+                <Border Grid.Row="2" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="15">
+                    <StackPanel>
+                        <TextBlock Text="xy色度实时曲线" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
+                        <TextBlock Text="（图表功能暂时禁用，等待本地Windows编译）" FontSize="12" Foreground="#757575" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                        <TextBlock Text="{Binding ChartStatus, StringFormat={}{0}}" FontSize="14" HorizontalAlignment="Center" Margin="0,5,0,0"/>
+                    </StackPanel>
                 </Border>
 
                 <!-- 目标设置 -->

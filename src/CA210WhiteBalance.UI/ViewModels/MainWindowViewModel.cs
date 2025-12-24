@@ -30,7 +30,6 @@ namespace CA210WhiteBalance.UI.ViewModels
         private readonly Type _mockSerialPortServiceType;
         private readonly Type _mockWhiteBalanceAlgorithmType;
 
-        private readonly DispatcherTimer _chartUpdateTimer;
         private DispatcherTimer _measureTimer;
 
         // 目标配置
@@ -46,8 +45,8 @@ namespace CA210WhiteBalance.UI.ViewModels
         private CancellationTokenSource _debugCts;
         private object _lastDebugResult;
 
-        // 图表模型
-        private OxyPlot.PlotModel _chartModel;
+        // 图表状态（简化版）
+        private string _chartStatus = "图表功能已禁用";
 
         /// <summary>
         /// 构造函数 - 支持Mock服务（GitHub Actions编译）
@@ -72,14 +71,8 @@ namespace CA210WhiteBalance.UI.ViewModels
             _measureHistory = new ObservableCollection<object>();
 
             InitializeCommands();
-            InitializeChart();
+            // InitializeChart(); // 暂时禁用
             SubscribeMockEvents();
-
-            _chartUpdateTimer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromMilliseconds(200)
-            };
-            _chartUpdateTimer.Tick += (s, e) => UpdateChart();
 
             LoadSettings();
         }
@@ -210,11 +203,11 @@ namespace CA210WhiteBalance.UI.ViewModels
             set => SetProperty(ref _logText, value);
         }
 
-        // 图表模型
-        public OxyPlot.PlotModel ChartModel
+        // 图表状态（简化版）
+        public string ChartStatus
         {
-            get => _chartModel;
-            set => SetProperty(ref _chartModel, value);
+            get => _chartStatus;
+            set => SetProperty(ref _chartStatus, value);
         }
 
         #endregion
@@ -327,7 +320,6 @@ namespace CA210WhiteBalance.UI.ViewModels
             _measureTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(500) };
             _measureTimer.Tick += async (s, e) => await (_ca210Service as MockCA210Service).MeasureAsync();
             _measureTimer.Start();
-            _chartUpdateTimer.Start();
             AddLog("开始连续测量");
         }
 
@@ -335,7 +327,6 @@ namespace CA210WhiteBalance.UI.ViewModels
         {
             _measureTimer?.Stop();
             _measureTimer = null;
-            _chartUpdateTimer.Stop();
             AddLog("停止连续测量");
         }
 
@@ -489,77 +480,6 @@ namespace CA210WhiteBalance.UI.ViewModels
                 OnPropertyChanged(nameof(DeltaDisplay));
                 OnPropertyChanged(nameof(DeltaColor));
             }
-        }
-
-        private void InitializeChart()
-        {
-            _chartModel = new OxyPlot.PlotModel { Title = "xy色度实时曲线" };
-
-            // 目标点
-            var targetSeries = new OxyPlot.Series.ScatterSeries
-            {
-                Title = "目标点",
-                MarkerType = OxyPlot.MarkerType.Circle,
-                MarkerSize = 10,
-                MarkerFill = OxyPlot.OxyColors.Green
-            };
-            targetSeries.Points.Add(new OxyPlot.Series.ScatterPoint(_targetX, _targetY));
-
-            // 测量历史
-            var measureSeries = new OxyPlot.Series.LineSeries
-            {
-                Title = "测量轨迹",
-                Color = OxyPlot.OxyColors.Blue,
-                StrokeThickness = 1.5
-            };
-
-            // 容差圆
-            var toleranceSeries = new OxyPlot.Series.LineSeries
-            {
-                Title = $"容差范围 ±{_tolerance:F4}",
-                Color = OxyPlot.OxyColors.Red,
-                StrokeThickness = 1,
-                LineStyle = OxyPlot.LineStyle.Dash
-            };
-
-            _chartModel.Series.Add(targetSeries);
-            _chartModel.Series.Add(measureSeries);
-            _chartModel.Series.Add(toleranceSeries);
-
-            _chartModel.Axes.Add(new OxyPlot.Axes.LinearAxis
-            {
-                Position = OxyPlot.Axes.AxisPosition.Bottom,
-                Title = "x",
-                Minimum = 0.25,
-                Maximum = 0.40
-            });
-
-            _chartModel.Axes.Add(new OxyPlot.Axes.LinearAxis
-            {
-                Position = OxyPlot.Axes.AxisPosition.Left,
-                Title = "y",
-                Minimum = 0.25,
-                Maximum = 0.40
-            });
-
-            _chartModel.LegendPosition = OxyPlot.LegendPosition.TopRight;
-
-            OnPropertyChanged(nameof(ChartModel));
-        }
-
-        private void UpdateChart()
-        {
-            if (_chartModel == null) return;
-
-            var measureSeries = _chartModel.Series[1] as OxyPlot.Series.LineSeries;
-            measureSeries.Points.Clear();
-
-            foreach (MockCA210Data data in _measureHistory)
-            {
-                measureSeries.Points.Add(new OxyPlot.DataPoint(data.Sx, data.Sy));
-            }
-
-            _chartModel.Invalidate(true);
         }
 
         private void AddLog(string message)

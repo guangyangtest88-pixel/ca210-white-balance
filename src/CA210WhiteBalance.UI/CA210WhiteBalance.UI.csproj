@@ -10,7 +10,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- OxyPlot.Wpf暂时移除，等待GitHub Actions编译成功后再添加 -->
+    <!-- TODO: 本地Windows开发时取消注释以使用图表功能
     <PackageReference Include="OxyPlot.Wpf" Version="2.1.2" />
+    -->
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
