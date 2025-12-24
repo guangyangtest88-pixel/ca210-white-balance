@@ -20,10 +20,12 @@
     <PackageReference Include="ClosedXML" Version="2.0.0" />
   </ItemGroup>
 
-  <!-- GitHub Actions编译时不引用Core项目 -->
-  <ItemGroup Condition="'$(GITHUB_ACTIONS)' != 'true'">
+  <!-- Core项目暂时不引用，使用Mock服务代替 -->
+  <!-- TODO: 本地Windows开发时可以取消注释以使用真实CA-SDK
+  <ItemGroup>
     <ProjectReference Include="..\CA210WhiteBalance.Core\CA210WhiteBalance.Core.csproj" />
   </ItemGroup>
+  -->
 
   <ItemGroup>
     <ProjectReference Include="..\CA210WhiteBalance.Services\CA210WhiteBalance.Services.csproj" />
