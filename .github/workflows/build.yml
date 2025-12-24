@@ -7,6 +7,9 @@ on:
     branches: [ main, master, develop ]
   workflow_dispatch:
 
+env:
+  GITHUB_ACTIONS: "true"
+
 jobs:
   build:
     runs-on: windows-latest
@@ -23,6 +26,8 @@ jobs:
     # 还原依赖（跳过无法解析的项目）
     - name: Restore UI dependencies
       run: dotnet restore src/CA210WhiteBalance.UI/CA210WhiteBalance.UI.csproj
+      env:
+        GITHUB_ACTIONS: "true"
 
     - name: Restore Services dependencies
       run: dotnet restore src/CA210WhiteBalance.Services/CA210WhiteBalance.Services.csproj

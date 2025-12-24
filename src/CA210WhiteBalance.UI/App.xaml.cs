@@ -16,15 +16,6 @@ namespace CA210WhiteBalance.UI
     {
         public static IServiceProvider ServiceProvider { get; private set; }
 
-        /// <summary>
-        /// 检测是否在GitHub Actions环境中运行
-        /// </summary>
-        private static bool IsRunningInGitHubActions()
-        {
-            var githubActions = Environment.GetEnvironmentVariable("GITHUB_ACTIONS");
-            return !string.IsNullOrEmpty(githubActions) && githubActions.Equals("true", StringComparison.OrdinalIgnoreCase);
-        }
-
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
@@ -44,70 +35,25 @@ namespace CA210WhiteBalance.UI
 
         private void ConfigureServices(IServiceCollection services)
         {
-            bool isGitHubActions = IsRunningInGitHubActions();
-
-            if (isGitHubActions)
-            {
-                // GitHub Actions环境：使用Mock服务进行编译
-                services.AddSingleton<MockCA210Service>();
-                services.AddSingleton<MockSerialPortService>();
-                services.AddSingleton<MockWhiteBalanceAlgorithm>();
-
-                // 注册Mock服务的别名，使ViewModel可以使用
-                services.AddSingleton(sp => sp.GetRequiredService<MockCA210Service>());
-                services.AddSingleton(sp => sp.GetRequiredService<MockSerialPortService>());
-                services.AddSingleton(sp => sp.GetRequiredService<MockWhiteBalanceAlgorithm>());
-            }
-            else
-            {
-                // 本地Windows环境：使用真实的Core服务
-#if !GITHUB_ACTIONS
-                services.AddSingleton<CA210WhiteBalance.Core.CA210.ICA210Service, CA210WhiteBalance.Core.CA210.CA210Service>();
-                services.AddSingleton<CA210WhiteBalance.Core.SerialPort.ISerialPortService, CA210WhiteBalance.Core.SerialPort.SerialPortService>();
-                services.AddSingleton<CA210WhiteBalance.Core.SerialPort.ProtocolManager>();
-                services.AddSingleton<CA210WhiteBalance.Core.Algorithm.IWhiteBalanceAlgorithm, CA210WhiteBalance.Core.Algorithm.WhiteBalanceAlgorithm>();
-#endif
-            }
+            // 注册Mock服务（用于GitHub Actions编译）
+            // TODO: 本地Windows开发时需要替换为真实的CA210Service等
+            services.AddSingleton<MockCA210Service>();
+            services.AddSingleton<MockSerialPortService>();
+            services.AddSingleton<MockWhiteBalanceAlgorithm>();
 
             // UI服务
             services.AddSingleton<MainWindow>();
 
-            // ViewModel - 使用工厂方法根据环境创建
+            // ViewModel - 使用Mock服务创建
             services.AddSingleton<ViewModels.MainWindowViewModel>(sp =>
             {
-                if (isGitHubActions)
-                {
-                    // 使用Mock服务创建ViewModel
-                    var ca210Service = sp.GetRequiredService<MockCA210Service>();
-                    var serialService = sp.GetRequiredService<MockSerialPortService>();
-                    var algorithm = sp.GetRequiredService<MockWhiteBalanceAlgorithm>();
-                    var reportService = sp.GetRequiredService<Services.IReportService>();
-                    var logger = sp.GetRequiredService<ILogger<ViewModels.MainWindowViewModel>>();
+                var ca210Service = sp.GetRequiredService<MockCA210Service>();
+                var serialService = sp.GetRequiredService<MockSerialPortService>();
+                var algorithm = sp.GetRequiredService<MockWhiteBalanceAlgorithm>();
+                var reportService = sp.GetRequiredService<Services.IReportService>();
+                var logger = sp.GetRequiredService<ILogger<ViewModels.MainWindowViewModel>>();
 
-                    return new ViewModels.MainWindowViewModel(ca210Service, serialService, algorithm, reportService, logger);
-                }
-                else
-                {
-#if !GITHUB_ACTIONS
-                    // 使用真实服务创建ViewModel
-                    var ca210Service = sp.GetRequiredService<CA210WhiteBalance.Core.CA210.ICA210Service>();
-                    var serialService = sp.GetRequiredService<CA210WhiteBalance.Core.SerialPort.ISerialPortService>();
-                    var algorithm = sp.GetRequiredService<CA210WhiteBalance.Core.Algorithm.IWhiteBalanceAlgorithm>();
-                    var reportService = sp.GetRequiredService<Services.IReportService>();
-                    var logger = sp.GetRequiredService<ILogger<ViewModels.MainWindowViewModel>>();
-
-                    return new ViewModels.MainWindowViewModel(ca210Service, serialService, algorithm, reportService, logger);
-#else
-                    // GitHub Actions编译时的fallback
-                    var ca210Service = sp.GetRequiredService<MockCA210Service>();
-                    var serialService = sp.GetRequiredService<MockSerialPortService>();
-                    var algorithm = sp.GetRequiredService<MockWhiteBalanceAlgorithm>();
-                    var reportService = sp.GetRequiredService<Services.IReportService>();
-                    var logger = sp.GetRequiredService<ILogger<ViewModels.MainWindowViewModel>>();
-
-                    return new ViewModels.MainWindowViewModel(ca210Service, serialService, algorithm, reportService, logger);
-#endif
-                }
+                return new ViewModels.MainWindowViewModel(ca210Service, serialService, algorithm, reportService, logger);
             });
 
             // 应用服务
