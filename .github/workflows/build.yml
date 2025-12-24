@@ -23,11 +23,7 @@ jobs:
       with:
         dotnet-version: '6.0.x'
 
-    # 编译Services项目（先编译依赖项目）
-    - name: Build Services project
-      run: dotnet build src/CA210WhiteBalance.Services/CA210WhiteBalance.Services.csproj --configuration Release
-
-    # 编译UI项目
+    # 编译UI项目（会自动编译依赖的Services项目）
     - name: Build UI project
       run: dotnet build src/CA210WhiteBalance.UI/CA210WhiteBalance.UI.csproj --configuration Release /p:WarningLevel=0
 
